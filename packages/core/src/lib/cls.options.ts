@@ -1,5 +1,6 @@
 import { ExecutionContext, ModuleMetadata, Type } from '@nestjs/common';
 import type { ClsService } from './cls.service';
+import { ClsPluginFactory } from './plugins/plugin.interface';
 
 const getRandomString = () => Math.random().toString(36).slice(-8);
 
@@ -8,7 +9,7 @@ export class ClsModuleOptions {
      * whether to make the module global, so you don't need
      * to import ClsModule.forFeature()` in other modules
      */
-    global? = false;
+    global?= false;
 
     /**
      * An object with additional options for the `ClsMiddleware`
@@ -29,6 +30,12 @@ export class ClsModuleOptions {
      * Array of Proxy Provider classes to register
      */
     proxyProviders?: Type[];
+
+
+    /**
+     * Array of Cls Plugins to register
+     */
+    plugins?: ClsPluginFactory[];
 }
 
 export type ClsModuleFactoryOptions = Omit<
@@ -50,6 +57,11 @@ export interface ClsModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
      * Array of Proxy Provider classes to register
      */
     proxyProviders?: Type[];
+
+    /**
+     * Array of Cls Plugins to register
+     */
+    plugins?: ClsPluginFactory[];
 }
 
 export class ClsMiddlewareOptions {
@@ -80,19 +92,19 @@ export class ClsMiddlewareOptions {
      *
      * Default: `true`
      */
-    resolveProxyProviders? = true;
+    resolveProxyProviders?= true;
 
     /**
      * Whether to store the Request object to the CLS
      * It will be available under the CLS_REQ key
      */
-    saveReq? = true;
+    saveReq?= true;
 
     /**
      * Whether to store the Response object to the CLS
      * It will be available under the CLS_RES key
      */
-    saveRes? = false;
+    saveRes?= false;
 
     /**
      * Set to true to set up the context using a call to
@@ -102,7 +114,7 @@ export class ClsMiddlewareOptions {
      * Most of the time this should not be necessary, but
      * some frameworks are known to lose the context wih `run`.
      */
-    useEnterWith? = false;
+    useEnterWith?= false;
 }
 
 export class ClsGuardOptions {
@@ -137,7 +149,7 @@ export class ClsGuardOptions {
      *
      * Default: `true`
      */
-    resolveProxyProviders? = true;
+    resolveProxyProviders?= true;
 }
 
 export class ClsInterceptorOptions {
@@ -172,7 +184,7 @@ export class ClsInterceptorOptions {
      *
      * Default: `true`
      */
-    resolveProxyProviders? = true;
+    resolveProxyProviders?= true;
 }
 
 export class ClsDecoratorOptions<T extends any[]> {
@@ -206,7 +218,7 @@ export class ClsDecoratorOptions<T extends any[]> {
      *
      * Default: `false`
      */
-    resolveProxyProviders? = false;
+    resolveProxyProviders?= false;
 }
 
 export interface ClsStore {

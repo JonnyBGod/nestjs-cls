@@ -12861,6 +12861,7 @@ __metadata:
     "@types/node": ^18.0.0
     "@types/supertest": ^2.0.12
     jest: ^28.1.1
+    nestjs-cls: "workspace:^"
     prettier: ^2.7.1
     reflect-metadata: ^0.1.13
     rimraf: ^3.0.2
@@ -12897,7 +12898,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"nestjs-cls@workspace:packages/core":
+"nestjs-cls@workspace:^, nestjs-cls@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "nestjs-cls@workspace:packages/core"
   dependencies:

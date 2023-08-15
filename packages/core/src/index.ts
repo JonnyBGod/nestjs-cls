@@ -10,3 +10,4 @@ export * from './lib/cls.decorators';
 export * from './lib/cls.options';
 export { Terminal } from './types/terminal.type';
 
+export * from './lib/plugins/plugin.interface';

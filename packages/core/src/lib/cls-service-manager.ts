@@ -15,6 +15,10 @@ export class ClsServiceManager {
         return cls;
     }
 
+    static async resolvePluginSetup() {
+        throw new Error('Not implemented');
+    }
+
     /**
      * @deprecated use `resolveProxyProviders` on the `ClsService` instance
      */
