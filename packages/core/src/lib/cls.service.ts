@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
 import {
     DeepPropertyType,
@@ -11,6 +12,7 @@ import {
 import { getValueFromPath, setValueFromPath } from '../utils/value-from-path';
 import { CLS_ID } from './cls.constants';
 import type { ClsStore } from './cls.options';
+import { pluginSetups } from './plugins/plugin.globals';
 
 export class ClsContextOptions {
     /**
@@ -28,7 +30,7 @@ export class ClsContextOptions {
 }
 
 export class ClsService<S extends ClsStore = ClsStore> {
-    constructor(private readonly als: AsyncLocalStorage<any>) { }
+    constructor(private readonly als: AsyncLocalStorage<any>) {}
 
     /**
      * Set (or overrides) a value on the CLS context.
@@ -215,5 +217,15 @@ export class ClsService<S extends ClsStore = ClsStore> {
             './proxy-provider/proxy-provider-manager'
         );
         await ProxyProviderManager.resolveProxyProviders();
+    }
+
+    async resolvePluginSetup() {
+        for (const [pluginName, setupFunction] of pluginSetups) {
+            Logger.debug(
+                `Setting up plugin ${pluginName}`,
+                'ClsServiceManager',
+            );
+            await setupFunction(this);
+        }
     }
 }

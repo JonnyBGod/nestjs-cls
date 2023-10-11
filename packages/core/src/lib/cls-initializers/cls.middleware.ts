@@ -7,11 +7,9 @@ import {
     CLS_RES,
 } from '../cls.constants';
 import { ClsMiddlewareOptions } from '../cls.options';
-import { ClsService } from '../cls.service';
 
 @Injectable()
 export class ClsMiddleware implements NestMiddleware {
-    private readonly cls: ClsService;
     private readonly options: Omit<ClsMiddlewareOptions, 'mount'>;
 
     constructor(
@@ -34,6 +32,7 @@ export class ClsMiddleware implements NestMiddleware {
                 if (this.options.setup) {
                     await this.options.setup(cls, req, res);
                 }
+                await cls.resolvePluginSetup();
                 if (this.options.resolveProxyProviders)
                     await cls.resolveProxyProviders();
                 next();

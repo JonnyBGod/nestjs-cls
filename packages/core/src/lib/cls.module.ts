@@ -16,6 +16,9 @@ import {
     HttpAdapterHost,
     ModuleRef,
 } from '@nestjs/core';
+import { ClsGuard } from './cls-initializers/cls.guard';
+import { ClsInterceptor } from './cls-initializers/cls.interceptor';
+import { ClsMiddleware } from './cls-initializers/cls.middleware';
 import { ClsServiceManager } from './cls-service-manager';
 import {
     CLS_GUARD_OPTIONS,
@@ -25,8 +28,6 @@ import {
     CLS_REQ,
     CLS_RES,
 } from './cls.constants';
-import { ClsGuard } from './cls-initializers/cls.guard';
-import { ClsInterceptor } from './cls-initializers/cls.interceptor';
 import {
     ClsGuardOptions,
     ClsInterceptorOptions,
@@ -34,8 +35,13 @@ import {
     ClsModuleAsyncOptions,
     ClsModuleOptions,
 } from './cls.options';
-import { ClsMiddleware } from './cls-initializers/cls.middleware';
 import { ClsService } from './cls.service';
+import { ClsPluginModule } from './plugins/cls-plugin.module';
+import {
+    ClsPluginFactory,
+    ClsPluginOptionsType,
+    ClsPluginWithOptions,
+} from './plugins/plugin.interface';
 import { ProxyProviderManager } from './proxy-provider/proxy-provider-manager';
 import { ClsModuleProxyProviderOptions } from './proxy-provider/proxy-provider.interfaces';
 
@@ -179,6 +185,12 @@ export class ClsModule implements NestModule {
             exports: [...commonProviders, proxyProvider.provide],
             global: options.global,
         };
+    }
+
+    static registerPlugin<T extends typeof ClsPluginFactory<any>>(
+        ...[PluginClass, pluginOptions]: ClsPluginWithOptions<T>
+    ): DynamicModule {
+        return ClsPluginModule.forFeature(PluginClass, pluginOptions);
     }
 
     private static createProxyClassProviders(

@@ -1,7 +1,14 @@
-import { DynamicModule, Module, Type, ValueProvider } from "@nestjs/common";
-import { ClsService, ClsServiceManager, CLS_REQ, CLS_RES } from "nestjs-cls";
-import { ProxyProviderManager } from "./proxy-provider-manager";
-import { ClsProxyModuleProviderOptions } from "./proxy-provider.interfaces";
+import { DynamicModule, Module, Type, ValueProvider } from '@nestjs/common';
+import {
+    ClsPluginFactory,
+    ClsPluginOptions,
+    ClsService,
+    ClsServiceManager,
+    CLS_REQ,
+    CLS_RES,
+} from 'nestjs-cls';
+import { ProxyProviderManager } from './proxy-provider-manager';
+import { ClsProxyModuleProviderOptions } from './proxy-provider.interfaces';
 
 const clsServiceProvider: ValueProvider<ClsService> = {
     provide: ClsService,
@@ -15,7 +22,16 @@ const commonProviders = [
 ];
 
 @Module({})
-export class ClsProxyModule {
+export class ClsProxyModule extends ClsPluginFactory<{ name: string }> {
+    createPlugin(options: { name: string }) {
+        return {
+            name: options.name,
+            onClsSetup: async () => {
+                await ProxyProviderManager.resolveProxyProviders();
+            },
+        };
+    }
+
     static forFeature(...proxyProviderClasses: Array<Type>): DynamicModule {
         const proxyProviders =
             this.createProxyClassProviders(proxyProviderClasses);
@@ -43,7 +59,6 @@ export class ClsProxyModule {
         };
     }
 
-
     private static createProxyClassProviders(
         proxyProviderClasses?: Array<Type>,
     ) {
@@ -55,5 +70,4 @@ export class ClsProxyModule {
             ) ?? []
         );
     }
-
 }

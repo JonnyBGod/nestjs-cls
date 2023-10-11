@@ -1,32 +1,31 @@
-import { DynamicModule } from "@nestjs/common";
-import { type } from "os";
-import { ClsService } from "../cls.service";
+import { ClsService } from '../cls.service';
 
-export type PluginInitFunction = (clsService: ClsService) => void | Promise<void>;
-export type PluginDestroyFunction = (clsService: ClsService) => void | Promise<void>;
-export type PluginClsSetupFunction = (clsService: ClsService) => void | Promise<void>;
-
-export interface ClsPlugin {
-  name: string,
-  options: ClsPluginOptions,
-}
+export type PluginInitFunction = (
+    clsService: ClsService,
+) => void | Promise<void>;
+export type PluginDestroyFunction = (
+    clsService: ClsService,
+) => void | Promise<void>;
+export type PluginClsSetupFunction = (
+    clsService: ClsService,
+) => void | Promise<void>;
 
 export interface ClsPluginOptions {
-  onModuleInit: (clsService: ClsService) => void | Promise<void>,
-  onModuleDestroy: (clsService: ClsService) => void | Promise<void>,
-  onClsSetup: PluginClsSetupFunction
+    name: string;
+    onModuleInit?: PluginInitFunction;
+    onModuleDestroy?: PluginDestroyFunction;
+    onClsSetup?: PluginClsSetupFunction;
 }
 
-export abstract class ClsPluginFactory {
-  abstract createPlugin(cls: ClsService): ClsPlugin;
+export abstract class ClsPluginFactory<T = any> {
+    abstract createPlugin(options: T): ClsPluginOptions;
 }
 
-export class ClsPluginModule {
-  static forFeature(clsPluginFactory: ClsPluginFactory): DynamicModule {
-    return {
-      module: ClsPluginModule,
-      global: true,
-      providers: [],
-    };
-  }
-}
+export type ClsPluginOptionsType<T extends ClsPluginFactory> = Parameters<
+    T['createPlugin']
+>[0];
+
+export type ClsPluginWithOptions<T extends typeof ClsPluginFactory> = [
+    PluginClass: T,
+    options: ClsPluginOptionsType<InstanceType<T>>,
+];

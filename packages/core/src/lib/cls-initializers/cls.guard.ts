@@ -29,6 +29,7 @@ export class ClsGuard implements CanActivate {
         if (this.options.setup) {
             await this.options.setup(cls, context);
         }
+        await cls.resolvePluginSetup();
         if (this.options.resolveProxyProviders)
             await cls.resolveProxyProviders();
         return true;
